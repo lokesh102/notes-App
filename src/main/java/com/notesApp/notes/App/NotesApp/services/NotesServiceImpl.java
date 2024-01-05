@@ -5,6 +5,7 @@ import com.notesApp.notes.App.NotesApp.DTOs.NotesResponseDTO;
 import com.notesApp.notes.App.NotesApp.exceptions.NoteNotFoundException;
 import com.notesApp.notes.App.NotesApp.models.Note;
 import com.notesApp.notes.App.NotesApp.repositories.NotesRepository;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -77,6 +78,18 @@ public class NotesServiceImpl implements NotesService{
         }
         throw new NoteNotFoundException("note with id "+id+" not found");
     }
+
+    @Override
+    public List<NotesResponseDTO> getProductsBySearch(String title) {
+       List<Note> notes =  notesRepository.findDistinctByTitleContaining(title);
+       List<NotesResponseDTO> notesResponseDTOList = new ArrayList<>();
+       for(Note note : notes){
+           NotesResponseDTO notesResponseDTO = convertNoteToNoteResponseDTO(note);
+           notesResponseDTOList.add(notesResponseDTO);
+       }
+       return notesResponseDTOList;
+    }
+
     public NotesResponseDTO convertNoteToNoteResponseDTO(Note note){
         NotesResponseDTO notesResponseDTO = new NotesResponseDTO();
         notesResponseDTO.setId(note.getId());
